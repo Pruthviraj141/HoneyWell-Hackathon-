@@ -1,3 +1,5 @@
+# Synthetic Attack Data Generator — 7 threat vector injection patterns
+
 # pyrefly: ignore [missing-import]
 import pandas as pd
 # pyrefly: ignore [missing-import]
