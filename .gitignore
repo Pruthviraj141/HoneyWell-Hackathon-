@@ -1,0 +1,32 @@
+# Environments
+venv/
+env/
+.env
+.venv
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Live queues / transient data
+data/live_queue.json
+
+# (Optional) If you want to exclude the large pre-trained models or CSVs from Git, uncomment these:
+# models/*.pkl
+# models/*.pt
+# data/*.csv

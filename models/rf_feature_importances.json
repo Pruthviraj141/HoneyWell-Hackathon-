@@ -1,0 +1,62 @@
+[
+  {
+    "feature": "session_duration",
+    "importance": 0.10573075771454593
+  },
+  {
+    "feature": "command_len",
+    "importance": 0.08989131961547497
+  },
+  {
+    "feature": "failed_attempts_z",
+    "importance": 0.0781890490684758
+  },
+  {
+    "feature": "is_new_device",
+    "importance": 0.07640134297893177
+  },
+  {
+    "feature": "session_duration_z",
+    "importance": 0.07263484950947664
+  },
+  {
+    "feature": "failed_attempts_10m",
+    "importance": 0.06898702341014346
+  },
+  {
+    "feature": "unique_resource_count_24h",
+    "importance": 0.06284957628325323
+  },
+  {
+    "feature": "is_new_country",
+    "importance": 0.05897733960966252
+  },
+  {
+    "feature": "is_unusual_os",
+    "importance": 0.05492012273254694
+  },
+  {
+    "feature": "is_unusual_resource",
+    "importance": 0.05491830853033868
+  },
+  {
+    "feature": "country_Unknown",
+    "importance": 0.03339914789746018
+  },
+  {
+    "feature": "country_India",
+    "importance": 0.03277635684866184
+  },
+  {
+    "feature": "geo_distance_km",
+    "importance": 0.030624530271678645
+  },
+  {
+    "feature": "is_unusual_geo",
+    "importance": 0.029618976070715064
+  },
+  {
+    "feature": "resource_accessed_Database Export",
+    "importance": 0.018612726108013868
+  }
+]
