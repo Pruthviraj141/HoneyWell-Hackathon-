@@ -1,3 +1,6 @@
+# Cyber AI Fusion Engine — 3-Model Weighted Risk Scorer
+# Models: RandomForest (0.5x) + GRU (0.3x) + GNN (0.2x)
+
 # pyrefly: ignore [missing-import]
 import pandas as pd
 # pyrefly: ignore [missing-import]
