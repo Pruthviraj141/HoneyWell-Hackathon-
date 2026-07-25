@@ -1,32 +1,44 @@
-# Environments
-venv/
-env/
-.env
-.venv
-
 # Python
+venv/
 __pycache__/
 *.py[cod]
-*$py.class
-*.so
+*.pyo
+*.pyd
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+*.log
 
-# Jupyter Notebook
-.ipynb_checkpoints
+# Environment
+.env
+.env.local
+.env.*.local
 
-# IDEs
-.idea/
+# Node / Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# IDE
 .vscode/
+.idea/
 *.swp
 *.swo
 
-# OS files
+# OS
 .DS_Store
 Thumbs.db
 
-# Live queues / transient data
-data/live_queue.json
+# Pytest
+.pytest_cache/
+htmlcov/
+.coverage
 
-# (Optional) If you want to exclude the large pre-trained models or CSVs from Git, uncomment these:
-# models/*.pkl
-# models/*.pt
-# data/*.csv
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Streamlit cache
+.streamlit/

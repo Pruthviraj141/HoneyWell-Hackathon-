@@ -5,4 +5,7 @@ joblib
 scikit-learn
 torch
 torch_geometric
+fastapi
+uvicorn[standard]
+pydantic
 streamlit
