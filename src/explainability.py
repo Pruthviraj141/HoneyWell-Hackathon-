@@ -1,3 +1,5 @@
+# Explainability Engine — Generates human-readable SAR alerts from AI scores
+
 import json
 import os
 # pyrefly: ignore [missing-import]
