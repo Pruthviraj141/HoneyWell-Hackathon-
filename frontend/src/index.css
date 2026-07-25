@@ -1,0 +1,143 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&family=Outfit:wght@400;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Base ────────────────────────────────────────────────── */
+@layer base {
+  html, body, #root { @apply h-full w-full; }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    @apply antialiased transition-colors duration-300;
+    background-color: #F3F4F6;
+    color: #111827;
+  }
+  h1,h2,h3,h4,h5,h6 { font-family:'Inter',system-ui,sans-serif; @apply tracking-tight; }
+  * { -webkit-font-smoothing:antialiased; }
+}
+
+/* ─── Components ──────────────────────────────────────────── */
+@layer components {
+  /* Glass panel / card */
+  .glass-panel {
+    background-color: #ffffff;
+    border: 1px solid #E5E7EB;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 1px 3px 0 rgba(0,0,0,0.07), 0 1px 2px -1px rgba(0,0,0,0.04);
+  }
+
+  /* Section label */
+  .section-label {
+    @apply text-[10px] font-bold uppercase tracking-[0.12em] text-gray-400;
+  }
+
+  /* Badges */
+  .badge { @apply inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold; }
+  .badge-primary { @apply bg-blue-50 text-blue-700 border border-blue-200; }
+  .badge-success { @apply bg-emerald-50 text-emerald-700 border border-emerald-200; }
+  .badge-warning { @apply bg-amber-50 text-amber-700 border border-amber-200; }
+  .badge-danger  { @apply bg-rose-50 text-rose-700 border border-rose-200; }
+
+  /* Tab bar */
+  .tab-bar     { @apply flex gap-1 p-1 bg-gray-100 rounded-xl; }
+  .tab-item    { @apply px-5 py-2 rounded-lg font-semibold text-sm transition-all duration-200 cursor-pointer border-0 bg-transparent; }
+  .tab-item-active   { background-color:#ffffff; color:#2563EB; box-shadow:0 1px 3px 0 rgba(0,0,0,0.10); }
+  .tab-item-inactive { @apply text-gray-500 hover:text-gray-700; }
+
+  /* Risk pills */
+  .risk-high   { @apply bg-rose-50 text-rose-700 border border-rose-200 font-bold; }
+  .risk-medium { @apply bg-amber-50 text-amber-700 border border-amber-200 font-bold; }
+  .risk-low    { @apply bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold; }
+
+  /* Score cards */
+  .score-card-danger  { @apply border border-rose-200 bg-rose-50 text-rose-700; }
+  .score-card-warning { @apply border border-amber-200 bg-amber-50 text-amber-700; }
+  .score-card-success { @apply border border-emerald-200 bg-emerald-50 text-emerald-700; }
+
+  /* Terminal block */
+  .terminal-block {
+    background: #0D1117;
+    @apply rounded-xl p-5 font-mono text-[11px] text-emerald-400 border border-gray-800 overflow-auto;
+  }
+}
+
+/* ─── Input / Select (outside @layer to avoid nesting issues) */
+.input-field {
+  display: block;
+  width: 100%;
+  background-color: #ffffff;
+  border: 1px solid #D1D5DB;
+  border-radius: 0.75rem;
+  padding: 0.625rem 1rem;
+  color: #111827;
+  font-size: 0.875rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.input-field::placeholder { color: #9CA3AF; }
+.input-field:focus {
+  outline: none;
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+}
+
+.select-field {
+  display: block;
+  width: 100%;
+  background-color: #ffffff;
+  border: 1px solid #D1D5DB;
+  border-radius: 0.75rem;
+  padding: 0.625rem 2.5rem 0.625rem 1rem;
+  color: #111827;
+  font-size: 0.875rem;
+  appearance: none;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.select-field:focus {
+  outline: none;
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+}
+
+/* dark overrides */
+.dark .input-field, .dark .select-field {
+  background-color: #1E293B;
+  border-color: #475569;
+  color: #E2E8F0;
+}
+.dark .input-field::placeholder { color: #64748B; }
+.dark .input-field:focus, .dark .select-field:focus {
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.20);
+}
+
+/* dark glass-panel */
+.dark .glass-panel {
+  background-color: #0F172A;
+  border-color: #334155;
+  box-shadow: 0 1px 3px 0 rgba(0,0,0,0.3);
+}
+
+/* ─── Status Dots ─────────────────────────────────────────── */
+.status-dot         { width:0.5rem; height:0.5rem; border-radius:9999px; display:inline-block; }
+.status-dot-success { background:#10B981; box-shadow:0 0 6px rgba(16,185,129,0.6); }
+.status-dot-warning { background:#F59E0B; box-shadow:0 0 6px rgba(245,158,11,0.6); }
+.status-dot-danger  { background:#EF4444; box-shadow:0 0 6px rgba(239,68,68,0.6); }
+.status-dot-muted   { background:#9CA3AF; }
+
+/* ─── Custom Scrollbar ────────────────────────────────────── */
+::-webkit-scrollbar        { width:5px; height:5px; }
+::-webkit-scrollbar-track  { background:transparent; }
+::-webkit-scrollbar-thumb  { background:#D1D5DB; border-radius:9999px; }
+::-webkit-scrollbar-thumb:hover { background:#9CA3AF; }
+
+/* ─── Micro-animations ────────────────────────────────────── */
+@keyframes fadeIn       { from{opacity:0}       to{opacity:1} }
+@keyframes slideUp      { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+@keyframes slideInRight { from{opacity:0;transform:translateX(14px)} to{opacity:1;transform:translateX(0)} }
+
+.animate-fade-in    { animation:fadeIn 0.25s ease-out both; }
+.animate-slide-up   { animation:slideUp 0.35s cubic-bezier(0.16,1,0.3,1) both; }
+.animate-slide-in-r { animation:slideInRight 0.3s cubic-bezier(0.16,1,0.3,1) both; }
