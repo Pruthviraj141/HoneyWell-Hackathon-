@@ -8,97 +8,86 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Brand primaries — Aviation Blue + Indigo
-        primary:     '#3B82F6',   // Aviation Blue
-        primaryHover:'#2563EB',
-        primaryDark: '#1D4ED8',
-        brand:       '#4F46E5',   // Indigo brand accent
-        brandDark:   '#4338CA',
-        secondary:   '#6366F1',   // Soft indigo-violet
+        // Core accent — single teal accent per §4 rule
+        accent:       '#00A3A3',
+        accentHover:  '#0FB9B9',
+        accentMuted:  '#0F3A3A',
 
-        // Status system
-        success:  '#10B981',  // Emerald — On-Time
-        warning:  '#F59E0B',  // Amber  — Delayed
-        danger:   '#EF4444',  // Rose   — Cancelled/Severe
+        // Semantic status
+        success: '#22C55E',
+        warning: '#F59E0B',
+        danger:  '#DC2626',
+        info:    '#38BDF8',
 
-        // Light mode surfaces
-        background: {
-          light: '#F3F4F6',  // Clean neutral slate
-          dark:  '#0F172A',
-        },
-        surface: {
-          light: '#FFFFFF',
-          dark:  '#1E293B',
-        },
-        surfaceAlt: {
-          light: '#F8FAFC',  // Very subtle off-white for nested cards
-          dark:  '#0F172A',
-        },
-        borderBase: {
-          light: '#E5E7EB',  // Gray-200
-          dark:  '#334155',
-        },
-        borderStrong: {
-          light: '#D1D5DB',  // Gray-300
-          dark:  '#475569',
-        },
+        // Severity scale (§4.3)
+        'sev-critical': '#DC2626',
+        'sev-high':     '#EA580C',
+        'sev-medium':   '#F59E0B',
+        'sev-low':      '#38BDF8',
+        'sev-info':     '#22C55E',
+        'sev-unknown':  '#64748B',
 
-        // Text palette
-        textPrimary: {
-          light: '#111827',  // Gray-900 — crisp black
-          dark:  '#F1F5F9',
-        },
-        textSecondary: {
-          light: '#4B5563',  // Gray-600
-          dark:  '#94A3B8',
-        },
-        textMuted: {
-          light: '#9CA3AF',  // Gray-400
-          dark:  '#64748B',
-        },
+        // Dark theme surfaces (§4.2)
+        base:           '#0B1220',
+        surface:        '#131C2B',
+        surfaceElevated:'#182334',
+        borderDefault:  '#2D3748',
+        borderSubtle:   '#1E293B',
+
+        // Light theme surfaces (§4.4)
+        'base-light':   '#F8FAFC',
+        'surface-light':'#FFFFFF',
+        'border-light': '#E2E8F0',
+
+        // Text (§4.2)
+        textPrimary:   { light: '#0F172A', dark: '#F8FAFC' },
+        textSecondary: { light: '#475569', dark: '#94A3B8' },
+        textMuted:     { light: '#64748B', dark: '#64748B' },
       },
 
       fontFamily: {
-        sans:    ['"Inter"', '"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
-        display: ['"Inter"', '"Outfit"',            'system-ui', 'sans-serif'],
-        mono:    ['"JetBrains Mono"', '"Fira Code"', 'monospace'],
+        sans: ['"Inter"', 'system-ui', '-apple-system', '"Segoe UI"', 'sans-serif'],
+        mono: ['"JetBrains Mono"', '"Fira Code"', 'monospace'],
+      },
+
+      fontSize: {
+        'caption':  ['12px', { lineHeight: '16px' }],
+        'body':     ['13px', { lineHeight: '20px' }],
+        'body-lg':  ['14px', { lineHeight: '20px' }],
+        'section':  ['16px', { lineHeight: '24px' }],
+        'page':     ['20px', { lineHeight: '28px' }],
       },
 
       boxShadow: {
-        'card':          '0 1px 3px 0 rgba(0,0,0,0.08), 0 1px 2px -1px rgba(0,0,0,0.06)',
-        'card-hover':    '0 4px 12px 0 rgba(0,0,0,0.10), 0 2px 6px -1px rgba(0,0,0,0.08)',
-        'card-lg':       '0 10px 25px -5px rgba(0,0,0,0.08), 0 4px 10px -6px rgba(0,0,0,0.06)',
-        'glow-primary':  '0 0 20px rgba(59,130,246,0.25)',
-        'glow-indigo':   '0 0 20px rgba(79,70,229,0.25)',
-        'glow-danger':   '0 0 20px rgba(239,68,68,0.25)',
-        'glow-success':  '0 0 15px rgba(16,185,129,0.20)',
-        'soft':          '0 4px 20px -2px rgba(0,0,0,0.05)',
-        'inner-sm':      'inset 0 1px 3px rgba(0,0,0,0.06)',
+        'card':       '0 1px 2px rgba(0,0,0,0.24)',
+        'card-hover': '0 2px 4px rgba(0,0,0,0.18)',
+        'none':       'none',
       },
 
       borderRadius: {
-        'xl2': '1rem',    // 16px
-        'xl3': '1.25rem', // 20px
+        'card': '8px',
+        'btn':  '6px',
+        'pill': '9999px',
       },
 
-      backgroundImage: {
-        'gradient-primary': 'linear-gradient(135deg, #3B82F6 0%, #4F46E5 100%)',
-        'gradient-subtle':  'linear-gradient(135deg, #EFF6FF 0%, #EDE9FE 100%)',
-        'gradient-success': 'linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%)',
-        'gradient-danger':  'linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%)',
+      spacing: {
+        '4.5': '18px',
+        '18':  '72px',
+      },
+
+      transitionDuration: {
+        '150': '150ms',
+        '200': '200ms',
       },
 
       animation: {
-        'fade-in':    'fadeIn 0.3s ease-out',
-        'slide-up':   'slideUp 0.4s cubic-bezier(0.16,1,0.3,1)',
-        'slide-in-r': 'slideInRight 0.35s cubic-bezier(0.16,1,0.3,1)',
-        'pulse-slow': 'pulse 3s cubic-bezier(0.4,0,0.6,1) infinite',
+        'fade-in':  'fadeIn 0.2s ease both',
+        'slide-up': 'slideUp 0.2s ease both',
       },
 
       keyframes: {
-        fadeIn:       { from: { opacity: 0 }, to: { opacity: 1 } },
-        slideUp:      { from: { opacity: 0, transform: 'translateY(12px)' }, to: { opacity: 1, transform: 'translateY(0)' } },
-        slideInRight: { from: { opacity: 0, transform: 'translateX(16px)' }, to: { opacity: 1, transform: 'translateX(0)' } },
+        fadeIn:  { from: { opacity: 0 }, to: { opacity: 1 } },
+        slideUp: { from: { opacity: 0, transform: 'translateY(8px)' }, to: { opacity: 1, transform: 'translateY(0)' } },
       },
     },
   },

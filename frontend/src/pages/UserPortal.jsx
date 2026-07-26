@@ -10,6 +10,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { API_BASE } from '../config';
 
 export function cn(...inputs) { return twMerge(clsx(inputs)); }
 
@@ -27,15 +28,15 @@ const ATTACK_DESCRIPTIONS = {
 function ProfileItem({ icon, label, value, fullWidth = false }) {
   return (
     <div className={cn(
-      'flex gap-3 p-4 rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 shadow-card hover:shadow-card-hover transition-shadow',
+      'flex gap-3 p-4 rounded-md',
       fullWidth ? 'col-span-2' : 'col-span-1'
-    )}>
-      <div className="w-9 h-9 rounded-lg bg-blue-50 dark:bg-slate-700 flex items-center justify-center text-primary flex-shrink-0">
-        {React.cloneElement(icon, { className: 'w-4.5 h-4.5' })}
+    )} style={{ border: '1px solid var(--border-default)', background: 'var(--bg-surface)' }}>
+      <div className="w-8 h-8 rounded-md flex items-center justify-center flex-shrink-0" style={{ background: 'var(--accent-primary-muted)', color: 'var(--accent-primary)' }}>
+        {React.cloneElement(icon, { className: 'w-4 h-4' })}
       </div>
       <div className="min-w-0">
-        <div className="text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-widest mb-0.5">{label}</div>
-        <div className="text-[13px] font-semibold text-gray-800 dark:text-slate-200 truncate">{value || 'N/A'}</div>
+        <div className="text-[11px] font-semibold uppercase tracking-wider mb-0.5" style={{ color: 'var(--text-muted)' }}>{label}</div>
+        <div className="text-[13px] font-medium truncate" style={{ color: 'var(--text-primary)' }}>{value || 'N/A'}</div>
       </div>
     </div>
   );
@@ -45,9 +46,9 @@ function ProfileItem({ icon, label, value, fullWidth = false }) {
 function ChartTooltip({ active, payload }) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 p-3 rounded-xl shadow-card-lg text-xs">
-      <p className="font-bold text-gray-700 dark:text-slate-200 mb-1">{payload[0].payload.timeLabel}</p>
-      <p className="text-primary font-medium flex items-center gap-1.5">
+    <div className="p-3 rounded-md shadow-card text-xs" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)' }}>
+      <p className="font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>{payload[0].payload.timeLabel}</p>
+      <p className="font-medium flex items-center gap-1.5" style={{ color: 'var(--accent-primary)' }}>
         <Database className="w-3 h-3" /> {payload[0].payload.y}
       </p>
     </div>
@@ -65,7 +66,7 @@ export default function UserPortal() {
   const [selectedAttack, setSelectedAttack]   = useState('brute_force');
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/entities')
+    fetch(`${API_BASE}/api/entities`)
       .then(r => r.json())
       .then(data => { setEntities(data); if (data.length > 0) setSelectedEntityId(data[0].id); })
       .catch(console.error);
@@ -73,9 +74,9 @@ export default function UserPortal() {
 
   useEffect(() => {
     if (!selectedEntityId) return;
-    fetch(`http://localhost:8000/api/entity/${selectedEntityId}`)
+    fetch(`${API_BASE}/api/entity/${selectedEntityId}`)
       .then(r => r.json()).then(setProfile).catch(console.error);
-    fetch(`http://localhost:8000/api/history/${selectedEntityId}`)
+    fetch(`${API_BASE}/api/history/${selectedEntityId}`)
       .then(r => r.json())
       .then(data => setHistory(data.map(d => ({
         x: new Date(d.timestamp).getTime(),
@@ -88,7 +89,7 @@ export default function UserPortal() {
   const injectAttack = async (type) => {
     setLoading(true);
     try {
-      const res  = await fetch('http://localhost:8000/api/inject', {
+      const res  = await fetch(`${API_BASE}/api/inject`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ attack_type: type, entity_id: selectedEntityId }),
@@ -103,16 +104,16 @@ export default function UserPortal() {
   };
 
   return (
-    <div className="flex-1 p-6 flex flex-col h-full overflow-hidden bg-gray-100 dark:bg-slate-950 transition-colors duration-300">
+    <div className="flex-1 p-6 flex flex-col h-full overflow-hidden transition-colors duration-150" style={{ background: 'var(--bg-base)' }}>
 
       {/* ── Page header banner ── */}
       <div className="glass-panel p-5 flex flex-col md:flex-row gap-4 md:items-center justify-between mb-5">
         <div>
-          <h1 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight mb-1">
-            Threat Simulator / Sandbox
+          <h1 className="text-page font-bold tracking-tight mb-1" style={{ color: 'var(--text-primary)' }}>
+            Threat Simulator
           </h1>
-          <p className="text-[13px] text-gray-400 dark:text-slate-500 max-w-lg leading-relaxed">
-            Select an entity to view their behavioral baseline, then use the Red Team Simulator to inject synthetic attacks.
+          <p className="text-[13px] max-w-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+            Select an entity to view their behavioral baseline, then inject synthetic attacks.
           </p>
         </div>
         <div className="w-full md:w-72 flex-shrink-0">
@@ -139,11 +140,11 @@ export default function UserPortal() {
           className="flex-1 glass-panel flex flex-col overflow-hidden"
         >
           {/* Panel header */}
-          <div className="px-6 py-4 border-b border-gray-200 dark:border-slate-700/60 bg-white dark:bg-slate-900 flex items-center gap-2">
-            <User className="w-4 h-4 text-primary" />
-            <h2 className="font-bold text-[14px] text-gray-900 dark:text-white">
+          <div className="px-5 py-3 flex items-center gap-2" style={{ borderBottom: '1px solid var(--border-default)', background: 'var(--bg-surface)' }}>
+            <User className="w-4 h-4" style={{ color: 'var(--accent-primary)' }} />
+            <h2 className="font-semibold text-[14px]" style={{ color: 'var(--text-primary)' }}>
               Profile Overview:{' '}
-              <span className="font-mono text-primary ml-1">{selectedEntityId}</span>
+              <span className="font-mono ml-1" style={{ color: 'var(--accent-primary)' }}>{selectedEntityId}</span>
             </h2>
           </div>
 
@@ -229,38 +230,36 @@ export default function UserPortal() {
         {/* Right: Red Team Simulator — keeps dark terminal aesthetic as intentional contrast */}
         <motion.div
           initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}
-          className="w-[380px] flex-shrink-0 flex flex-col rounded-2xl overflow-hidden relative"
-          style={{ background: 'linear-gradient(160deg, #0D1117 0%, #0B1120 100%)', border: '1px solid rgba(255,255,255,0.07)' }}
+          className="w-[380px] flex-shrink-0 flex flex-col rounded-md overflow-hidden relative"
+          style={{ background: '#0B1220', border: '1px solid #2D3748' }}
         >
-          {/* Ambient glow */}
-          <div className="absolute top-0 right-0 w-48 h-48 bg-rose-500/10 rounded-full blur-[60px] pointer-events-none -translate-y-1/2 translate-x-1/2" />
-          <div className="absolute bottom-0 left-0 w-40 h-40 bg-blue-500/8 rounded-full blur-[50px] pointer-events-none translate-y-1/2 -translate-x-1/2" />
+          {/* Removed ambient glow per §3 — no glow effects */}
 
           {/* Panel header */}
-          <div className="relative z-10 px-6 py-5 border-b border-white/[0.06] flex-shrink-0">
+          <div className="relative z-10 px-5 py-4 flex-shrink-0" style={{ borderBottom: '1px solid #2D3748' }}>
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-9 h-9 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 shadow-glow-danger">
+              <div className="w-8 h-8 rounded-md flex items-center justify-center" style={{ background: 'rgba(220,38,38,0.1)', border: '1px solid rgba(220,38,38,0.2)', color: '#DC2626' }}>
                 <Terminal className="w-4 h-4" />
               </div>
-              <h2 className="text-lg font-bold text-white tracking-tight">Red Team Sandbox</h2>
+              <h2 className="text-[16px] font-semibold text-white tracking-tight">Red Team Sandbox</h2>
             </div>
             <p className="text-[12px] text-slate-500 leading-relaxed">
-              Select a threat vector and deploy directly into the live data stream.
+              Select a threat vector and deploy into the live data stream.
             </p>
           </div>
 
           {/* Panel body */}
-          <div className="relative z-10 flex-1 overflow-y-auto px-6 py-5 space-y-5">
-            {/* Attack config card */}
-            <div className="bg-white/[0.04] border border-white/[0.07] rounded-xl p-5 backdrop-blur-sm">
-              <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">Target Payload</div>
+          <div className="relative z-10 flex-1 overflow-y-auto px-5 py-4 space-y-4">
+            <div className="p-4 rounded-md" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid #2D3748' }}>
+              <div className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-3">Target Payload</div>
 
               {/* Attack selector */}
               <div className="relative mb-5">
                 <select
                   value={selectedAttack}
                   onChange={e => setSelectedAttack(e.target.value)}
-                  className="w-full appearance-none bg-black/40 border border-white/10 rounded-xl py-3 px-4 pr-10 text-white text-[13px] focus:outline-none focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500/30 transition-all"
+                  className="w-full appearance-none rounded-md py-2.5 px-3 pr-10 text-white text-[13px] transition-colors duration-150"
+                  style={{ background: 'rgba(0,0,0,0.4)', border: '1px solid #2D3748' }}
                 >
                   {Object.entries(ATTACK_DESCRIPTIONS).map(([key, desc]) => (
                     <option key={key} value={key}>{key} — {desc}</option>
@@ -270,8 +269,8 @@ export default function UserPortal() {
               </div>
 
               {/* Selected attack description pill */}
-              <div className="mb-5 px-3 py-2.5 rounded-lg bg-rose-500/10 border border-rose-500/15 text-[11px] text-rose-300 leading-relaxed">
-                <span className="font-bold text-rose-400 mr-1">Vector:</span>
+              <div className="mb-4 px-3 py-2 rounded-md text-[11px] leading-relaxed" style={{ background: 'rgba(220,38,38,0.08)', border: '1px solid rgba(220,38,38,0.15)', color: '#F87171' }}>
+                <span className="font-semibold mr-1" style={{ color: '#DC2626' }}>Vector:</span>
                 {ATTACK_DESCRIPTIONS[selectedAttack]}
               </div>
 
@@ -279,10 +278,9 @@ export default function UserPortal() {
               <button
                 onClick={() => injectAttack(selectedAttack)}
                 disabled={loading}
-                className="w-full relative group overflow-hidden bg-rose-600 hover:bg-rose-500 text-white font-bold py-3.5 rounded-xl transition-all flex justify-center items-center gap-2 text-[13px]"
-                style={{ boxShadow: '0 0 20px rgba(239,68,68,0.3)' }}
+                className="w-full relative group overflow-hidden text-white font-semibold py-3 rounded-md transition-colors duration-150 flex justify-center items-center gap-2 text-[13px] disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{ background: '#DC2626' }}
               >
-                <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
                 <span className="relative z-10 flex items-center gap-2">
                   {loading
                     ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />

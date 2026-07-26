@@ -7,8 +7,8 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-
-export function cn(...inputs) { return twMerge(clsx(inputs)); }
+import { API_BASE } from '../config';
+import { cn } from '../utils';
 
 /* ── Fields that indicate attack anomaly — highlighted red ── */
 const ATTACK_FIELDS = new Set([
@@ -33,23 +33,28 @@ function ColorfulJSON({ data }) {
   const raw = data || {};
 
   const renderValue = (key, val, depth = 0) => {
-    const isAnom = isSuspiciousValue(key, val);
+    const isAnom = ATTACK_FIELDS.has(key) && isSuspiciousValue(key, val);
+    
+    const anomalyBadge = isAnom && (
+      <span className="ml-2 text-[10px] bg-[rgba(217,0,0,0.1)] text-[var(--status-critical)] border border-[var(--status-critical)] px-1.5 py-0.5 rounded font-semibold uppercase tracking-wider">
+        anomaly
+      </span>
+    );
 
     if (Array.isArray(val)) {
       return (
         <span>
-          <span className="text-slate-500">[</span>
+          <span className="text-[var(--text-muted)]">[</span>
           {val.map((item, i) => (
             <span key={i}>
-              <span className={cn(
-                'ml-2',
-                isAnom ? 'text-rose-400 font-bold' : 'text-amber-300'
-              )}>"{item}"</span>
-              {i < val.length - 1 && <span className="text-slate-500">,</span>}
+              <span className="text-[var(--text-muted)]">"</span>
+              <span className={cn(isAnom ? 'text-[var(--status-critical)] font-bold' : 'text-[#F59E0B]')}>{item}</span>
+              <span className="text-[var(--text-muted)]">"</span>
+              {i < val.length - 1 && <span className="text-[var(--text-muted)]">,</span>}
             </span>
           ))}
-          <span className="text-slate-500">]</span>
-          {isAnom && <span className="ml-2 text-[10px] bg-rose-500/20 text-rose-400 border border-rose-500/30 px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">⚠ anomaly</span>}
+          <span className="text-[var(--text-muted)]">]</span>
+          {anomalyBadge}
         </span>
       );
     }
@@ -57,8 +62,8 @@ function ColorfulJSON({ data }) {
     if (typeof val === 'number') {
       return (
         <span>
-          <span className={cn(isAnom ? 'text-rose-400 font-bold' : 'text-blue-300')}>{val}</span>
-          {isAnom && <span className="ml-2 text-[10px] bg-rose-500/20 text-rose-400 border border-rose-500/30 px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">⚠ anomaly</span>}
+          <span className={cn(isAnom ? 'text-[var(--status-critical)] font-bold' : 'text-[#38BDF8]')}>{val}</span>
+          {anomalyBadge}
         </span>
       );
     }
@@ -66,43 +71,29 @@ function ColorfulJSON({ data }) {
     if (typeof val === 'string') {
       return (
         <span>
-          <span className="text-slate-500">"</span>
-          <span className={cn(isAnom ? 'text-rose-400 font-bold' : 'text-emerald-300')}>{val}</span>
-          <span className="text-slate-500">"</span>
-          {isAnom && <span className="ml-2 text-[10px] bg-rose-500/20 text-rose-400 border border-rose-500/30 px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">⚠ anomaly</span>}
+          <span className="text-[var(--text-muted)]">"</span>
+          <span className={cn(isAnom ? 'text-[var(--status-critical)] font-bold' : 'text-[#22C55E]')}>{val}</span>
+          <span className="text-[var(--text-muted)]">"</span>
+          {anomalyBadge}
         </span>
       );
     }
 
-    return <span className="text-slate-300">{String(val)}</span>;
+    return <span className="text-[var(--text-secondary)]">{String(val)}</span>;
   };
 
   return (
     <div className="font-mono text-[11.5px] leading-[1.85] space-y-0.5">
-      <div className="text-slate-500">{`{`}</div>
-      {Object.entries(raw).map(([key, val]) => {
-        const isHot = ATTACK_FIELDS.has(key) && isSuspiciousValue(key, val);
-        return (
-          <div
-            key={key}
-            className={cn(
-              'flex items-start gap-1 px-2 py-0.5 rounded transition-colors',
-              isHot
-                ? 'bg-rose-500/[0.12] border-l-2 border-rose-500'
-                : 'hover:bg-white/[0.03]'
-            )}
-          >
-            <span className={cn(
-              'shrink-0',
-              isHot ? 'text-rose-300 font-bold' : 'text-purple-300'
-            )}>
-              "{key}":
-            </span>
-            <span className="break-all">{renderValue(key, val)}</span>
-          </div>
-        );
-      })}
-      <div className="text-slate-500">{`}`}</div>
+      <div className="text-[var(--text-muted)]">{`{`}</div>
+      {Object.entries(raw).map(([key, val]) => (
+        <div key={key} className="flex items-start gap-1 px-2 py-0.5 hover:bg-white/[0.03] transition-colors rounded">
+          <span className="shrink-0 text-[#C084FC]">
+            "{key}":
+          </span>
+          <span className="break-all">{renderValue(key, val)}</span>
+        </div>
+      ))}
+      <div className="text-[var(--text-muted)]">{`}`}</div>
     </div>
   );
 }
@@ -121,7 +112,7 @@ function RiskPill({ level, score }) {
     low:    'risk-low',
   }[riskColor(score)];
   return (
-    <span className={cn('inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] uppercase tracking-wider', cls)}>
+    <span className={cn('inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] uppercase tracking-wider', cls)}>
       {score > 0.8 && <AlertTriangle className="w-2.5 h-2.5" />}
       {level}
     </span>
@@ -134,36 +125,36 @@ function ScoreRing({ label, score }) {
     score > 0.5 ? 'score-card-warning' :
                   'score-card-success';
   return (
-    <div className={cn('p-4 rounded-xl flex flex-col items-center justify-center text-center gap-1', cls)}>
-      <div className="text-[9px] font-bold uppercase tracking-widest opacity-70">{label}</div>
-      <div className="text-2xl font-black tabular-nums">{score.toFixed(2)}</div>
+    <div className={cn('p-4 rounded-md flex flex-col items-center justify-center text-center gap-1', cls)}>
+      <div className="text-[11px] font-semibold uppercase tracking-wider opacity-80">{label}</div>
+      <div className="text-xl font-bold tabular-nums">{score.toFixed(2)}</div>
     </div>
   );
 }
 
 function MetricBadge({ title, value, variant = 'primary' }) {
   const map = {
-    primary: 'bg-blue-50   border-blue-100  text-blue-700  dark:bg-blue-900/15  dark:border-blue-800/30  dark:text-blue-400',
-    warning: 'bg-amber-50  border-amber-100 text-amber-700 dark:bg-amber-900/15 dark:border-amber-800/30 dark:text-amber-400',
-    danger:  'bg-rose-50   border-rose-100  text-rose-700  dark:bg-rose-900/15  dark:border-rose-800/30  dark:text-rose-400',
+    primary: 'badge-primary',
+    warning: 'badge-warning',
+    danger:  'badge-danger',
   };
   return (
-    <div className={cn('flex items-center gap-3 px-4 py-2.5 rounded-xl border shadow-sm', map[variant])}>
-      <span className="text-[10px] font-bold uppercase tracking-wider opacity-75">{title}</span>
-      <span className="text-2xl font-black tabular-nums">{value}</span>
+    <div className={cn('flex items-center gap-3 px-3 py-2 rounded-md border', map[variant])} style={{ borderColor: 'var(--border-default)' }}>
+      <span className="text-[11px] font-semibold uppercase tracking-wider opacity-80">{title}</span>
+      <span className="text-lg font-bold tabular-nums">{value}</span>
     </div>
   );
 }
 
 function ProfileMetric({ title, value, icon }) {
   return (
-    <div className="p-4 border border-gray-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800/50 shadow-card flex items-center gap-3 hover:shadow-card-hover transition-shadow">
-      <div className="w-10 h-10 rounded-lg bg-blue-50 dark:bg-slate-700 flex items-center justify-center text-primary flex-shrink-0">
-        {React.cloneElement(icon, { className: 'w-5 h-5' })}
+    <div className="p-4 rounded-md flex items-center gap-3 transition-colors duration-150" style={{ border: '1px solid var(--border-default)', background: 'var(--bg-surface)' }}>
+      <div className="w-9 h-9 rounded-md flex items-center justify-center flex-shrink-0" style={{ background: 'var(--accent-primary-muted)', color: 'var(--accent-primary)' }}>
+        {React.cloneElement(icon, { className: 'w-4 h-4' })}
       </div>
       <div>
         <div className="section-label mb-0.5">{title}</div>
-        <div className="text-base font-bold text-gray-900 dark:text-slate-100 tabular-nums">{value}</div>
+        <div className="text-[14px] font-semibold tabular-nums" style={{ color: 'var(--text-primary)' }}>{value}</div>
       </div>
     </div>
   );
@@ -188,6 +179,7 @@ export default function AdminDashboard() {
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [filterLevel, setFilterLevel] = useState('All');
 
   // Tab 2
   const [entities, setEntities] = useState([]);
@@ -197,10 +189,18 @@ export default function AdminDashboard() {
 
   const fetchQueue = async () => {
     try {
-      const res  = await fetch('http://localhost:8000/api/queue');
+      const res  = await fetch(`${API_BASE}/api/queue`);
       const data = await res.json();
       setEvents(data);
-      if (data.length > 0 && !selectedEvent) setSelectedEvent(data[0]);
+      setSelectedEvent(prev => {
+        if (!prev && data.length > 0) return data[0];
+        if (prev) {
+          // If we have a previously selected event, try to find its updated version in the new data
+          const updated = data.find(e => e.entity_id === prev.entity_id && e.timestamp === prev.timestamp);
+          return updated || prev;
+        }
+        return prev;
+      });
     } catch (err) { console.error('Failed to fetch queue', err); }
   };
 
@@ -217,7 +217,7 @@ export default function AdminDashboard() {
   };
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/entities')
+    fetch(`${API_BASE}/api/entities`)
       .then(r => r.json())
       .then(data => { setEntities(data); if (data.length > 0) setSelectedEntityId(data[0].id); })
       .catch(console.error);
@@ -225,9 +225,9 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     if (selectedEntityId && activeTab === 'investigator') {
-      fetch(`http://localhost:8000/api/entity/${selectedEntityId}`)
+      fetch(`${API_BASE}/api/entity/${selectedEntityId}`)
         .then(r => r.json()).then(setProfile).catch(console.error);
-      fetch(`http://localhost:8000/api/history/${selectedEntityId}`)
+      fetch(`${API_BASE}/api/history/${selectedEntityId}`)
         .then(r => r.json()).then(setHistory).catch(console.error);
     }
   }, [selectedEntityId, activeTab]);
@@ -236,12 +236,12 @@ export default function AdminDashboard() {
   const entitiesFlagged   = new Set(events.filter(e => e.is_anomaly).map(e => e.entity_id)).size;
 
   return (
-    <div className="flex-1 p-6 flex flex-col h-full overflow-hidden bg-gray-100 dark:bg-slate-950 transition-colors duration-300">
+    <div className="flex-1 p-6 flex flex-col h-full overflow-hidden transition-colors duration-150" style={{ background: 'var(--bg-base)' }}>
 
       {/* ── Top bar ── */}
       <div className="flex justify-between items-center mb-5">
         {/* Tab switcher */}
-        <div className="tab-bar">
+        <div className="tab-bar" style={{ borderBottom: 'none' }}>
           {[['stream', 'Live Event Stream'], ['investigator', 'Entity Investigator']].map(([id, label]) => (
             <button
               key={id}
@@ -270,18 +270,36 @@ export default function AdminDashboard() {
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-1 w-full h-full">
 
             {/* Alert Queue — left column */}
-            <div className="w-[320px] flex-shrink-0 flex flex-col border-r border-gray-200 dark:border-slate-700/60 bg-gray-50 dark:bg-slate-900/30">
-              <div className="px-5 py-4 border-b border-gray-200 dark:border-slate-700/60 flex justify-between items-center bg-white dark:bg-slate-900">
-                <h2 className="font-bold text-[14px] flex items-center gap-2 text-gray-900 dark:text-white">
-                  <ShieldAlert className="w-4 h-4 text-primary" />
+            <div className="w-[320px] flex-shrink-0 flex flex-col" style={{ borderRight: '1px solid var(--border-default)', background: 'var(--bg-surface)' }}>
+              <div className="px-4 py-3 flex justify-between items-center" style={{ borderBottom: '1px solid var(--border-default)', background: 'var(--bg-surface)' }}>
+                <h2 className="font-semibold text-[14px] flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
+                  <ShieldAlert className="w-4 h-4" style={{ color: 'var(--accent-primary)' }} />
                   SOC Alert Queue
                 </h2>
                 <button
                   onClick={handleRefresh}
-                  className={cn('p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors text-gray-400 hover:text-primary', isRefreshing && 'animate-spin text-primary')}
+                  className={cn('p-1.5 rounded-md transition-colors duration-150', isRefreshing && 'animate-spin')}
+                  style={{ color: isRefreshing ? 'var(--accent-primary)' : 'var(--text-muted)' }}
                 >
                   <RefreshCw className="w-4 h-4" />
                 </button>
+              </div>
+
+              {/* Filter Bar */}
+              <div className="px-3 py-2 flex gap-1 overflow-x-auto" style={{ borderBottom: '1px solid var(--border-default)' }}>
+                {['All', 'Critical', 'High', 'Elevated', 'Normal'].map(f => (
+                  <button
+                    key={f}
+                    onClick={() => setFilterLevel(f)}
+                    className="px-2.5 py-1 rounded text-[11px] font-semibold uppercase tracking-wider whitespace-nowrap transition-colors duration-150"
+                    style={{
+                      background: filterLevel === f ? 'var(--accent-primary)' : 'transparent',
+                      color: filterLevel === f ? '#fff' : 'var(--text-muted)',
+                    }}
+                  >
+                    {f}
+                  </button>
+                ))}
               </div>
 
               <div className="overflow-y-auto flex-1 p-3 space-y-2">
@@ -292,9 +310,11 @@ export default function AdminDashboard() {
                   </div>
                 )}
                 <AnimatePresence>
-                  {events.map((ev, idx) => {
+                  {events
+                    .filter(ev => filterLevel === 'All' || ev.risk_level.includes(filterLevel))
+                    .map((ev, idx) => {
                     const rc = riskColor(ev.risk_score);
-                    const isSelected = selectedEvent === ev;
+                    const isSelected = selectedEvent && selectedEvent.timestamp === ev.timestamp && selectedEvent.entity_id === ev.entity_id;
                     return (
                       <motion.div
                         layout
@@ -303,18 +323,19 @@ export default function AdminDashboard() {
                         key={ev.timestamp + ev.entity_id + idx}
                         onClick={() => setSelectedEvent(ev)}
                         className={cn(
-                          'p-3.5 rounded-xl border cursor-pointer transition-all duration-150',
-                          isSelected
-                            ? 'bg-blue-50 dark:bg-blue-900/20 border-primary/40 ring-1 ring-primary/20 shadow-sm'
-                            : 'bg-white dark:bg-slate-800/60 border-gray-200 dark:border-slate-700 hover:border-gray-300 dark:hover:border-slate-600 hover:shadow-card'
+                          'p-3 rounded-md cursor-pointer transition-colors duration-150'
                         )}
+                        style={{
+                          background: isSelected ? 'var(--accent-primary-muted)' : 'transparent',
+                          borderLeft: isSelected ? '2px solid var(--accent-primary)' : '2px solid transparent',
+                        }}
                       >
                         <div className="flex justify-between items-start mb-2">
                           <RiskPill level={ev.risk_level} score={ev.risk_score} />
                           <span className="text-[10px] text-gray-400 dark:text-slate-500 font-mono">{ev.timestamp?.split(' ')[1]}</span>
                         </div>
-                        <div className="text-[13px] font-semibold text-gray-800 dark:text-slate-200 leading-snug line-clamp-2">{ev.headline}</div>
-                        <div className="mt-2 flex items-center gap-1.5 text-[11px] text-gray-400 dark:text-slate-500">
+                        <div className="text-[13px] font-medium leading-snug line-clamp-2" style={{ color: 'var(--text-primary)' }}>{ev.headline}</div>
+                        <div className="mt-1.5 flex items-center gap-1.5 text-[11px]" style={{ color: 'var(--text-muted)' }}>
                           <User className="w-3 h-3" /> {ev.entity_id}
                         </div>
                       </motion.div>
@@ -325,35 +346,35 @@ export default function AdminDashboard() {
             </div>
 
             {/* SAR Drill-down — right */}
-            <div className="flex-1 flex flex-col overflow-hidden bg-white dark:bg-slate-900">
+            <div className="flex-1 flex flex-col overflow-hidden" style={{ background: 'var(--bg-surface)' }}>
               {selectedEvent ? (
                 <motion.div initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} className="flex flex-col h-full">
                   {/* SAR header */}
-                  <div className={cn(
-                    'px-8 py-5 border-b border-gray-200 dark:border-slate-700/60',
-                    selectedEvent.risk_score > 0.8 ? 'bg-rose-50   dark:bg-rose-900/10' :
-                    selectedEvent.risk_score > 0.5 ? 'bg-amber-50  dark:bg-amber-900/10' :
-                                                     'bg-blue-50   dark:bg-blue-900/10'
-                  )}>
+                  <div className="px-6 py-4" style={{
+                    borderBottom: '1px solid var(--border-default)',
+                    background: selectedEvent.risk_score > 0.8 ? 'rgba(220,38,38,0.06)' :
+                                selectedEvent.risk_score > 0.5 ? 'rgba(245,158,11,0.06)' :
+                                                                  'var(--bg-surface)'
+                  }}>
                     <div className="flex items-center gap-3 mb-1.5">
                       <Activity className={cn('w-5 h-5',
                         selectedEvent.risk_score > 0.8 ? 'text-rose-600' :
                         selectedEvent.risk_score > 0.5 ? 'text-amber-600' : 'text-primary'
                       )} />
-                      <h2 className="text-lg font-bold text-gray-900 dark:text-white tracking-tight">
+                      <h2 className="text-section font-semibold tracking-tight" style={{ color: 'var(--text-primary)' }}>
                         Suspicious Activity Report
                       </h2>
                     </div>
-                    <p className="text-sm text-gray-500 dark:text-slate-400">
+                    <p className="text-[13px]" style={{ color: 'var(--text-secondary)' }}>
                       Target:{' '}
-                      <span className="font-mono font-semibold text-gray-800 dark:text-slate-200 bg-white dark:bg-slate-800 px-2 py-0.5 rounded border border-gray-200 dark:border-slate-700">
+                      <span className="font-mono font-medium px-1.5 py-0.5 rounded" style={{ background: 'var(--accent-primary-muted)', color: 'var(--text-primary)', border: '1px solid var(--border-default)' }}>
                         {selectedEvent.entity_id}
                       </span>
                     </p>
                   </div>
 
                   {/* SAR body */}
-                  <div className="flex-1 overflow-y-auto p-8 flex gap-8">
+                  <div className="flex-1 overflow-y-auto p-6 flex gap-6">
                     {/* Left column */}
                     <div className="w-1/2 space-y-6">
                       {/* Attack Vector */}
@@ -437,12 +458,12 @@ export default function AdminDashboard() {
                         <div className="section-label mb-2 flex items-center gap-1.5">
                           <Database className="w-3 h-3 text-purple-400" /> Triggering Telemetry
                           {selectedEvent.risk_score > 0.5 && (
-                            <span className="ml-auto text-[10px] bg-rose-500/15 text-rose-500 border border-rose-500/25 px-2 py-0.5 rounded-full font-bold">⚠ Red fields = anomaly indicators</span>
+                            <span className="ml-auto text-[10px] px-2 py-0.5 rounded font-semibold" style={{ background: 'rgba(217, 0, 0, 0.08)', color: 'var(--status-critical)', border: '1px solid var(--status-critical)' }}><AlertTriangle className="w-2.5 h-2.5 inline mr-0.5" /> Red fields = anomaly indicators</span>
                           )}
                         </div>
                         <div
                           className="flex-1 overflow-auto rounded-xl p-4 border"
-                          style={{ background: '#0D1117', borderColor: 'rgba(255,255,255,0.06)' }}
+                          style={{ background: 'var(--bg-deep)', borderColor: 'var(--border-default)' }}
                         >
                           <ColorfulJSON data={selectedEvent._raw_event || selectedEvent} />
                         </div>

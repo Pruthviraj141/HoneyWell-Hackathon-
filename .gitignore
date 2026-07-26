@@ -10,7 +10,8 @@ dist/
 build/
 .eggs/
 *.log
-
+/home/pruthvi/project_Honeywell/anomaly_detection_project/roothoney.pem
+/home/pruthvi/project_Honeywell/anomaly_detection_project/backend_key.pem
 # Environment
 .env
 .env.local
@@ -42,3 +43,8 @@ htmlcov/
 
 # Streamlit cache
 .streamlit/
+roothoney.pem
+deploye_ec2.sh
+ssh-key-for-ec2.sh
+backend_key.pem
+do_100_pushes.sh
